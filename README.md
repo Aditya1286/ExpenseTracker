@@ -1,40 +1,117 @@
-## Expense Tracker (React + Java)
+# Expense Tracker
 
-Local-only expense tracker with a React frontend (Vite + MUI + Recharts) that stores data in browser `localStorage`, plus a Java/Maven CLI for offline analytics from exported JSON/CSV. No backend or database is used.
+Local-first expense management application with React frontend and Java CLI for offline analytics. Zero backend dependencies.
 
-### Frontend (React)
-- Location: `frontend/`
-- Stack: React 18, Vite, TypeScript, MUI, Recharts, React Router.
-- Features: add/edit/delete expenses, category manager, filtering/sorting, monthly/weekly totals, charts (pie/line/bar), JSON/CSV export, JSON import for recovery, dark/light theme toggle.
+## Overview
 
-#### Run locally
+Privacy-focused expense tracker storing data in browser localStorage. Includes a Maven-based CLI processor for offline analysis of exported data.
+
+## Architecture
+
+**Frontend**: React 18 + TypeScript + Vite  
+**UI**: Material-UI + Recharts  
+**Storage**: Browser localStorage (no backend calls)  
+**Processor**: Java 17 + Maven CLI
+
+## Features
+
+### Web Application
+- CRUD operations for expenses and categories
+- Filter/sort by date, category, amount
+- Visual analytics (pie, line, bar charts)
+- Monthly/weekly aggregations
+- JSON/CSV export and import
+- Dark/light theme
+
+### Java CLI Processor
+- Process exported JSON/CSV files offline
+- Generate category and monthly summaries
+- Output to console and `summary.json`
+
+## Quick Start
+
+### Frontend
+
 ```bash
 cd frontend
 npm install
-npm run dev   # http://localhost:5173
-npm run build # output in dist/
+npm run dev          # http://localhost:5173
+npm run build        # production build → dist/
 ```
 
-### Java Processor (Maven CLI)
-- Location: `processor/`
-- Build runnable JAR with dependencies:
+### Java Processor
+
 ```bash
 cd processor
-mvn clean package
+chmod +x mvnw        # Unix/Linux/Mac
+./mvnw clean package
+
+# Process exported data
+java -jar target/expense-processor-1.0.0-shaded.jar path/to/expenses-export.json
 ```
-- Run against an exported JSON/CSV file:
-```bash
-java -jar target/expense-processor-1.0.0-shaded.jar ../path/to/expenses-export.json
+
+## Data Flow
+
+1. Manage expenses in React app (localStorage)
+2. Export as JSON/CSV from Settings
+3. Run Java CLI for offline analytics
+4. Re-import JSON to restore/merge data
+
+## File Formats
+
+**JSON Export**:
+```json
+{
+  "expenses": [
+    {
+      "id": "1",
+      "title": "Groceries",
+      "amount": 45.50,
+      "category": "Food",
+      "date": "2025-01-15",
+      "note": "Optional note"
+    }
+  ],
+  "categories": ["Food", "Transport"]
+}
 ```
-- Output: prints totals by category/month to stdout and writes `summary.json` next to the input file.
 
-### Data flow
-1. Use the React app to manage expenses (data stored in browser `localStorage`).
-2. Export data as JSON/CSV from the Settings page.
-3. Run the Java CLI on the exported file for offline analytics or archiving.
-4. Re-import JSON in the UI to restore/merge data locally.
+**CSV Export**:
+```csv
+title,amount,category,date,note
+Groceries,45.50,Food,2025-01-15,Weekly shopping
+```
 
-### Notes
-- No backend calls are made; everything is local to the browser.
-- The Java CLI accepts either the frontend JSON bundle (`{ expenses, categories }`) or a CSV with headers: `title,amount,category,date,note`.
+## Project Structure
 
+```
+├── frontend/           # React application
+│   ├── src/
+│   ├── public/
+│   └── package.json
+│
+└── processor/          # Java CLI
+    ├── src/main/java/
+    ├── pom.xml
+    └── mvnw
+```
+
+## Requirements
+
+- Node.js 16+
+- Java 17+
+- Maven 3.6+ (or use included wrapper)
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TypeScript, Vite |
+| UI | Material-UI, Recharts |
+| Routing | React Router v6 |
+| Backend | Java 17, Maven |
+| Libraries | Lombok, MapStruct, Commons Lang3 |
+
+## License
+
+MIT
